@@ -112,52 +112,9 @@ function Product() {
   }
 
   return (
-    <div className="container mx-auto py-5">
-      <h1 className="text-3xl font-bold">Product</h1>
-
-      <div className="table w-11/12 mx-auto border-separate border-spacing-0 border-none text-left">
-        <thead className="bg-slate-200">
-          <tr>
-            <th>Product ID</th>
-            <th>Product Name</th>
-            <th>Description</th>
-            <th>Quantity</th>
-            <th>Price</th>
-            <th>Category</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {products.map(function (product: ProductType) {
-            return (
-              <tr>
-                <td>{product.productId}</td>
-                <td>{product.productName}</td>
-                <td>{product.description}</td>
-                <td>{product.qty}</td>
-                <td>{product.price}</td>
-                <td>{product.category.catName}</td>
-                <td>
-                  <button
-                    onClick={() => editProduct(product)}
-                    className="bg-cyan-500 text-white px-4 py-3 rounded-md hover:bg-cyan-700 mr-2"
-                  >
-                    Edit
-                  </button>
-
-                  <button
-                    onClick={() => deleteProduct(product.productId)}
-                    className="bg-red-600 text-white px-4 py-3 rounded-md hover:bg-red-700"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </div>
-      <div className="border border-slate-200 py-3 px-4 rounded-md w-11/12 mx-auto mt-6 bg-slate-50">
+    <div className="container mx-auto">
+      <div className="border border-slate-200 py-3 px-4 rounded-md m-3 bg-slate-50">
+        <h1 className="text-xl font-bold mb-3">Product Management</h1>
         <form>
           <div>
             <input
@@ -209,7 +166,7 @@ function Product() {
           {editingProduct ? (
             <button
               type="button"
-              className="bg-cyan-500 text-white px-4 py-3 rounded-md hover:bg-cyan-700"
+              className="bg-cyan-500 text-white px-4 py-2 rounded-md hover:bg-cyan-700"
               onClick={updateProduct}
             >
               Edit Product
@@ -217,13 +174,57 @@ function Product() {
           ) : (
             <button
               type="button"
-              className="bg-cyan-500 text-white px-4 py-3 rounded-md hover:bg-cyan-700"
+              className="bg-cyan-500 text-white px-4 py-2 rounded-md hover:bg-cyan-700"
               onClick={handleSubmit}
             >
               Create Product
             </button>
           )}
         </form>
+        <div className="mt-6 overflow-y-auto h-[290px] ">
+          <table className="table w-full border-separate border-spacing-0 border-none text-left">
+            <thead className="bg-cyan-300 sticky top-0 ">
+              <tr>
+                <th>Product ID</th>
+                <th>Product Name</th>
+                <th>Description</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Category</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {products.map(function (product: ProductType) {
+                return (
+                  <tr>
+                    <td>{product.productId}</td>
+                    <td>{product.productName}</td>
+                    <td>{product.description}</td>
+                    <td>{product.qty}</td>
+                    <td>{product.price}</td>
+                    <td>{product.category.catName}</td>
+                    <td>
+                      <button
+                        onClick={() => editProduct(product)}
+                        className="bg-cyan-500 text-white px-4 py-2 rounded-md hover:bg-cyan-700 mr-2"
+                      >
+                        Edit
+                      </button>
+
+                      <button
+                        onClick={() => deleteProduct(product.productId)}
+                        className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

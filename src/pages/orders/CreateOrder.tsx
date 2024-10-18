@@ -47,26 +47,13 @@ function CreateOrder() {
     }
   }
 
-  //   function filterProducts(category: CategoryType) {
-  //     setFilteredProducts([]);
-  //     products.map(function (product) {
-  //       if (product.category.catId === category.catId) {
-  //         const updatedfilteredProducts = [...filteredProducts, product];
-  //         setFilteredProducts(updatedfilteredProducts);
-  //       }
-  //     });
-  //   }
-
   function filterProducts(category: CategoryType) {
-    // Clear the filtered products array first
     setFilteredProducts([]);
 
-    // Filter the products that match the selected category
     const updatedFilteredProducts = products.filter(
       (product) => product.category.catId === category.catId
     );
 
-    // Update the state with the filtered products
     setFilteredProducts(updatedFilteredProducts);
   }
 
