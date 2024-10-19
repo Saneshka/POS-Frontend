@@ -133,14 +133,14 @@ function Product() {
               value={description}
               onChange={handleDescription}
             />
-            <input
+            {/* <input
               className="py-3 px-4 text-sm w-full rounded-md border border-slate-200 mb-3"
               type="number"
               placeholder="Quantity"
               required
               value={qty !== null ? qty : ""}
               onChange={handleQty}
-            />
+            /> */}
             <input
               className="py-3 px-4 text-sm w-full rounded-md border border-slate-200 mb-3"
               type="number"
@@ -188,7 +188,7 @@ function Product() {
                 <th>Product ID</th>
                 <th>Product Name</th>
                 <th>Description</th>
-                <th>Quantity</th>
+                {/* <th>Quantity</th> */}
                 <th>Price</th>
                 <th>Category</th>
                 <th>Action</th>
@@ -201,7 +201,7 @@ function Product() {
                     <td>{product.productId}</td>
                     <td>{product.productName}</td>
                     <td>{product.description}</td>
-                    <td>{product.qty}</td>
+                    {/* <td>{product.qty}</td> */}
                     <td>{product.price}</td>
                     <td>{product.category.catName}</td>
                     <td>
