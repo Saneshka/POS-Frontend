@@ -3,6 +3,7 @@ import ProductType from "../../types/ProductType";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import CategoryType from "../../types/CategoryType";
+import StockType from "../../types/StockType";
 
 function CreateOrder() {
   const [products, setProducts] = useState<ProductType[]>([]);
@@ -10,6 +11,9 @@ function CreateOrder() {
   const [orderedProducts, setOrderedProducts] = useState<ProductType[]>([]);
   const [total, setTotal] = useState<number>(0);
   const [filteredProducts, setFilteredProducts] = useState<ProductType[]>([]);
+  const [remainingStock, setRemainingStock] = useState<{
+    [key: number]: number;
+  }>({});
 
   const navigate = useNavigate();
 
@@ -30,6 +34,16 @@ function CreateOrder() {
       console.log(error);
     }
   }
+
+  async function loadStocks(id: number): Promise<StockType | null> {
+    try {
+      const res = await axios.get("http://localhost:8080/stocks/" + id);
+      return res.data;
+    } catch (error) {
+      return null;
+    }
+  }
+
   async function saveOrder() {
     var productIds: any = [];
 
@@ -57,10 +71,51 @@ function CreateOrder() {
     setFilteredProducts(updatedFilteredProducts);
   }
 
-  function addProductToOrder(product: ProductType) {
-    const updatedOrder = [...orderedProducts, product];
-    setOrderedProducts(updatedOrder);
-    console.log(orderedProducts);
+  // async function addProductToOrder(product: ProductType) {
+  //   const stock = await loadStocks(product.productId);
+  //   console.log("saneshka", stock);
+  //   if (stock?.qty! <= 0) {
+  //     alert("Not Enough Stocks!");
+  //   } else {
+  //     const updatedOrder = [...orderedProducts, product];
+  //     setOrderedProducts(updatedOrder);
+  //   }
+  // }
+
+  async function addProductToOrder(product: ProductType) {
+    let currentStock = remainingStock[product.productId];
+
+    // If stock is not tracked yet, fetch it from the API
+    if (currentStock === undefined) {
+      const stock = await loadStocks(product.productId); // Fetch stock data
+      currentStock = stock?.qty!;
+
+      if (currentStock <= 0) {
+        alert("Not Enough Stocks!");
+        return;
+      } else {
+        setRemainingStock((prev) => ({
+          ...prev,
+          [product.productId]: currentStock,
+        }));
+      }
+    }
+
+    // Check the current stock (locally tracked)
+    if (currentStock <= 0) {
+      alert("Not Enough Stocks!");
+    } else {
+      // Add the product to the order
+      const updatedOrder = [...orderedProducts, product];
+      setOrderedProducts(updatedOrder);
+
+      // Reduce the available stock locally
+      currentStock -= 1;
+      setRemainingStock((prev) => ({
+        ...prev,
+        [product.productId]: currentStock,
+      }));
+    }
   }
 
   useEffect(
