@@ -20,33 +20,38 @@ function Order() {
   }, []);
 
   return (
-    <div className="container mx-auto py-5">
-      <h1 className="text-3xl font-bold">Orders</h1>
+    <div className="container mx-auto">
+      <div className="border border-slate-200 py-3 px-4 rounded-md m-3 bg-slate-50">
+        <h1 className="text-xl font-bold mb-4">Order Management</h1>
 
-      <Link to={"/orders/create"} className="text-blue-500 mb-5 block">
-        Add Order
-      </Link>
-      <div className="table w-11/12 mx-auto border-separate border-spacing-0 border-none text-left">
-        <thead className="bg-slate-200">
-          <tr>
-            <th>Order Id</th>
-            <th>Order Date & Time</th>
-            <th>Total Amount</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {orders.map(function (order) {
-            return (
+        <Link
+          to={"/orders/create"}
+          className="bg-cyan-500 text-white px-4 py-2 rounded-md hover:bg-cyan-700 mr-2 justify-end"
+        >
+          Add Order
+        </Link>
+        <div className="overflow-y-auto h-[540px] mt-6">
+          <table className="table w-full border-separate border-spacing-0 border-none text-left">
+            <thead className="bg-cyan-300 sticky top-0 ">
               <tr>
-                <td>{order.id}</td>
-                <td>{order.orderDateTime}</td>
-                <td>{order.totalPrice}</td>
-                <td></td>
+                <th>Order Id</th>
+                <th>Order Date & Time</th>
+                <th>Total Amount</th>
               </tr>
-            );
-          })}
-        </tbody>
+            </thead>
+            <tbody>
+              {orders.map(function (order) {
+                return (
+                  <tr>
+                    <td>{order.id}</td>
+                    <td>{order.orderDateTime}</td>
+                    <td>{order.totalPrice}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

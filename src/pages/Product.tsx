@@ -181,7 +181,7 @@ function Product() {
             </button>
           )}
         </form>
-        <div className="mt-6 overflow-y-auto h-[290px] ">
+        <div className="mt-6 overflow-y-auto h-[300px] ">
           <table className="table w-full border-separate border-spacing-0 border-none text-left">
             <thead className="bg-cyan-300 sticky top-0 ">
               <tr>

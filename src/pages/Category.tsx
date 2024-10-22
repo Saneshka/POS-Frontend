@@ -6,7 +6,10 @@ function Category() {
   const [categories, setCategories] = useState<CategoryType[]>([]);
 
   const [catName, setCatName] = useState<string>("");
-  const [description, setDescription] = useState<String>("");
+  const [description, setDescription] = useState<string>("");
+  const [editingCategory, setEditingCategory] = useState<CategoryType | null>(
+    null
+  );
 
   useEffect(function () {
     loadCategories();
@@ -25,6 +28,24 @@ function Category() {
     console.log(response);
     loadCategories();
   }
+  async function updateCategory() {
+    const data = {
+      catName: catName,
+      description: description,
+    };
+    try {
+      const res = await axios.put(
+        "http://localhost:8080/categories/" + editingCategory?.catId,
+        data
+      );
+      loadCategories();
+      setEditingCategory(null);
+      setCatName("");
+      setDescription("");
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   function handleCatName(event: any) {
     setCatName(event.target.value);
@@ -32,67 +53,82 @@ function Category() {
   function handleDescription(event: any) {
     setDescription(event.target.value);
   }
+  function editCategory(category: CategoryType) {
+    setEditingCategory(category);
+    setCatName(category.catName);
+    setDescription(category.description);
+  }
 
   return (
-    <div className="container mx-auto py-5">
-      <h1 className="text-3xl font-bold mb-5 text-slate-900 ml-3">
-        Category Management
-      </h1>
-
-      <table className="table-auto mx-auto w-11/12 border border-collapse border-slate-400 ">
-        <thead>
-          <tr className="bg-cyan-500 text-white">
-            <th className="border border-slate-300 p-2">Category Id</th>
-            <th className="border border-slate-300 p-2">Category Name</th>
-            <th className="border border-slate-300 p-2">Description</th>
-          </tr>
-        </thead>
-        <tbody>
-          {categories &&
-            categories.map(function (category: CategoryType) {
-              return (
-                <tr>
-                  <td className="border border-slate-300 p-2">
-                    {category.catId}
-                  </td>
-                  <td className="border border-slate-300 p-2">
-                    {category.catName}
-                  </td>
-                  <td className="border border-slate-300 p-2">
-                    {category.description}
-                  </td>
-                </tr>
-              );
-            })}
-        </tbody>
-      </table>
-
-      <div className="border border-slate-200 py-3 px-4 rounded-md w-11/12 mx-auto mt-6 bg-slate-50">
+    <div className="container mx-auto">
+      <div className="border border-slate-200 py-3 px-4 rounded-md m-3 bg-slate-50">
+        <h1 className="text-xl font-bold mb-3">Category Management</h1>
         <form>
-          <h2 className="text-slate-600 font-semibold mb-5">Create Category</h2>
-
           <input
             className="py-3 px-4 text-sm w-full rounded-md border border-slate-200 mb-3"
             type="text"
             placeholder="Category Name"
             required
+            value={catName}
             onChange={handleCatName}
           />
           <input
             className="py-3 px-4 text-sm w-full rounded-md border border-slate-200 mb-3"
             type="text"
             placeholder="Description"
+            value={description}
             onChange={handleDescription}
           />
-
-          <button
-            type="button"
-            className="bg-cyan-500 text-white px-4 py-3 rounded-md hover:bg-cyan-700"
-            onClick={handelSubmit}
-          >
-            Create Category
-          </button>
+          {editingCategory ? (
+            <button
+              type="button"
+              className="bg-cyan-500 text-white px-4 py-2 rounded-md hover:bg-cyan-700"
+              onClick={updateCategory}
+            >
+              Edit Category
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="bg-cyan-500 text-white px-4 py-3 rounded-md hover:bg-cyan-700"
+              onClick={handelSubmit}
+            >
+              Create Category
+            </button>
+          )}
         </form>
+        <div className="mt-6 overflow-y-auto h-[405px]">
+          <table className="table w-full border-separate border-spacing-0 border-none text-left ">
+            <thead className="bg-cyan-300 stick top-0">
+              <tr>
+                <th>Category Id</th>
+                <th>Category Name</th>
+                <th>Description</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {categories &&
+                categories.map(function (category: CategoryType) {
+                  return (
+                    <tr>
+                      <td>{category.catId}</td>
+                      <td>{category.catName}</td>
+                      <td>{category.description}</td>
+                      <td>
+                        <button
+                          onClick={() => editCategory(category)}
+                          className="bg-cyan-500 text-white px-4 py-2 rounded-md hover:bg-cyan-700 mr-2"
+                        >
+                          Edit
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

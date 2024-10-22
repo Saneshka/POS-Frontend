@@ -123,7 +123,7 @@ function Stock() {
           {/* {editingStock ? (
           )} */}
         </form>
-        <div className="mt-6 overflow-y-auto h-[400px]">
+        <div className="mt-6 overflow-y-auto h-[415px]">
           <table className="table w-full border-separate border-spacing-0 border-none text-left">
             <thead className="bg-cyan-300 sticky top-0">
               <tr>
