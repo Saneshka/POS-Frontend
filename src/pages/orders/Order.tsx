@@ -44,7 +44,7 @@ function Order() {
                 return (
                   <tr>
                     <td>{order.id}</td>
-                    <td>{order.orderDateTime}</td>
+                    <td>{new Date(order.orderDateTime).toLocaleString()}</td>
                     <td>{order.totalPrice}</td>
                   </tr>
                 );
