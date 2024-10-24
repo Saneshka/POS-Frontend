@@ -1,8 +1,10 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import CategoryType from "../types/CategoryType";
+import { useAuth } from "../context/AuthContext";
 
 function Category() {
+  const { isAuthenticated, jwtToken } = useAuth();
   const [categories, setCategories] = useState<CategoryType[]>([]);
 
   const [catName, setCatName] = useState<string>("");
@@ -11,12 +13,26 @@ function Category() {
     null
   );
 
-  useEffect(function () {
-    loadCategories();
-  }, []);
+  const config = {
+    headers: {
+      Authorization: `Bearer ${jwtToken}`,
+    },
+  };
+
+  useEffect(
+    function () {
+      if (isAuthenticated) {
+        loadCategories();
+      }
+    },
+    [isAuthenticated]
+  );
 
   async function loadCategories() {
-    const response = await axios.get("http://localhost:8080/categories");
+    const response = await axios.get(
+      "http://localhost:8080/categories",
+      config
+    );
     setCategories(response.data);
   }
   async function handelSubmit() {
@@ -24,7 +40,11 @@ function Category() {
       catName: catName,
       description: description,
     };
-    const response = await axios.post("http://localhost:8080/categories", data);
+    const response = await axios.post(
+      "http://localhost:8080/categories",
+      data,
+      config
+    );
     console.log(response);
     loadCategories();
   }
@@ -36,7 +56,8 @@ function Category() {
     try {
       const res = await axios.put(
         "http://localhost:8080/categories/" + editingCategory?.catId,
-        data
+        data,
+        config
       );
       loadCategories();
       setEditingCategory(null);

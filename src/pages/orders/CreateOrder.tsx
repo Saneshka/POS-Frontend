@@ -4,8 +4,11 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import CategoryType from "../../types/CategoryType";
 import StockType from "../../types/StockType";
+import { useAuth } from "../../context/AuthContext";
 
 function CreateOrder() {
+  const { isAuthenticated, jwtToken } = useAuth();
+
   const [products, setProducts] = useState<ProductType[]>([]);
   const [categories, setCategories] = useState<CategoryType[]>([]);
   const [orderedProducts, setOrderedProducts] = useState<ProductType[]>([]);
@@ -17,9 +20,15 @@ function CreateOrder() {
 
   const navigate = useNavigate();
 
+  const config = {
+    headers: {
+      Authorization: `Bearer ${jwtToken}`,
+    },
+  };
+
   async function loadCategories() {
     try {
-      const res = await axios.get("http://localhost:8080/categories");
+      const res = await axios.get("http://localhost:8080/categories", config);
       setCategories(res.data);
     } catch (error) {
       console.log(error);
@@ -28,7 +37,7 @@ function CreateOrder() {
 
   async function loadProducts() {
     try {
-      const res = await axios.get("http://localhost:8080/products");
+      const res = await axios.get("http://localhost:8080/products", config);
       setProducts(res.data);
     } catch (error) {
       console.log(error);
@@ -37,7 +46,7 @@ function CreateOrder() {
 
   async function loadStocks(id: number): Promise<StockType | null> {
     try {
-      const res = await axios.get("http://localhost:8080/stocks/" + id);
+      const res = await axios.get("http://localhost:8080/stocks/" + id, config);
       return res.data;
     } catch (error) {
       return null;
@@ -52,9 +61,13 @@ function CreateOrder() {
     });
 
     try {
-      await axios.post("http://localhost:8080/orders", {
-        productIds: productIds,
-      });
+      await axios.post(
+        "http://localhost:8080/orders",
+        {
+          productIds: productIds,
+        },
+        config
+      );
       navigate("/orders");
     } catch (error) {
       console.log(error);
@@ -129,9 +142,11 @@ function CreateOrder() {
   );
 
   useEffect(() => {
-    loadProducts();
-    loadCategories();
-  }, []);
+    if (isAuthenticated) {
+      loadProducts();
+      loadCategories();
+    }
+  }, [isAuthenticated]);
 
   return (
     <div>

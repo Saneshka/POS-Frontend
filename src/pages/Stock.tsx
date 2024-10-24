@@ -2,8 +2,11 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import ProductType from "../types/ProductType";
 import StockType from "../types/StockType";
+import { useAuth } from "../context/AuthContext";
 
 function Stock() {
+  const { isAuthenticated, jwtToken } = useAuth();
+
   const [stocks, setStocks] = useState<StockType[]>([]);
   const [products, setProducts] = useState<ProductType[]>([]);
 
@@ -13,12 +16,18 @@ function Stock() {
 
   const [editingStock, setEditingStock] = useState<StockType | null>(null);
 
+  const config = {
+    headers: {
+      Authorization: `Bearer ${jwtToken}`,
+    },
+  };
+
   async function loadProducts() {
-    const res = await axios.get("http://localhost:8080/products");
+    const res = await axios.get("http://localhost:8080/products", config);
     setProducts(res.data);
   }
   async function loadStocks() {
-    const res = await axios.get("http://localhost:8080/stocks");
+    const res = await axios.get("http://localhost:8080/stocks", config);
     setStocks(res.data);
   }
   async function removeStock() {
@@ -30,7 +39,8 @@ function Stock() {
     try {
       const res = await axios.put(
         "http://localhost:8080/stocks/" + editingStock?.id,
-        data
+        data,
+        config
       );
       loadStocks();
       setEditingStock(null);
@@ -48,7 +58,8 @@ function Stock() {
     try {
       const res = await axios.put(
         "http://localhost:8080/stocks/" + editingStock?.id,
-        data
+        data,
+        config
       );
       loadStocks();
       setEditingStock(null);

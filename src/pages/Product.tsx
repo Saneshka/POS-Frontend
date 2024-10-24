@@ -2,8 +2,11 @@ import { useEffect, useState } from "react";
 import ProductType from "../types/ProductType";
 import axios from "axios";
 import CategoryType from "../types/CategoryType";
+import { useAuth } from "../context/AuthContext";
 
 function Product() {
+  const { isAuthenticated, jwtToken } = useAuth();
+
   const [products, setProducts] = useState<ProductType[]>([]);
   const [categories, setCategories] = useState<CategoryType[]>([]);
 
@@ -17,10 +20,20 @@ function Product() {
   const [price, setPrice] = useState<number | null>(null);
   const [categoryId, setCategoryId] = useState<number>(0);
 
-  useEffect(function () {
-    loadProducts();
-    loadCategories();
-  }, []);
+  const config = {
+    headers: {
+      Authorization: `Bearer ${jwtToken}`,
+    },
+  };
+  useEffect(
+    function () {
+      if (isAuthenticated) {
+        loadProducts();
+        loadCategories();
+      }
+    },
+    [isAuthenticated]
+  );
 
   function handleProductName(event: any) {
     setProductName(event.target.value);
@@ -47,11 +60,11 @@ function Product() {
   }
 
   async function loadProducts() {
-    const res = await axios.get("http://localhost:8080/products");
+    const res = await axios.get("http://localhost:8080/products", config);
     setProducts(res.data);
   }
   async function loadCategories() {
-    const res = await axios.get("http://localhost:8080/categories");
+    const res = await axios.get("http://localhost:8080/categories", config);
     setCategories(res.data);
   }
 
@@ -64,7 +77,11 @@ function Product() {
       categoryId: categoryId,
     };
     try {
-      const res = await axios.post("http://localhost:8080/products", data);
+      const res = await axios.post(
+        "http://localhost:8080/products",
+        data,
+        config
+      );
       console.log(res);
       loadProducts();
       setProductName("");
@@ -87,7 +104,8 @@ function Product() {
     try {
       const res = await axios.put(
         "http://localhost:8080/products/" + editingProduct?.productId,
-        data
+        data,
+        config
       );
       loadProducts();
       setEditingProduct(null);
@@ -103,7 +121,8 @@ function Product() {
   async function deleteProduct(productId: number) {
     try {
       const res = await axios.delete(
-        "http://localhost:8080/products/" + productId
+        "http://localhost:8080/products/" + productId,
+        config
       );
       loadProducts();
     } catch (error) {
