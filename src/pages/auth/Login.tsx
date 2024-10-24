@@ -13,21 +13,21 @@ function Login() {
   const [error, setError] = useState<String>("");
 
   async function submit(event: any) {
-    event?.preventDefault();
+    event.preventDefault();
     if (username == "" || password == "") {
       setError("Username and Password are Required");
-    }
-
-    const data = {
-      username: username,
-      password: password,
-    };
-    try {
-      const res = await axios.post("http://localhost:8080/auth/login", data);
-      login(res.data);
-      navigate("/");
-    } catch (error) {
-      setError("There was an error login in  ");
+    } else {
+      const data = {
+        username: username,
+        password: password,
+      };
+      try {
+        const res = await axios.post("http://localhost:8080/auth/login", data);
+        login(res.data);
+        navigate("/");
+      } catch (error) {
+        setError("There was an error login in  ");
+      }
     }
   }
   return (
@@ -55,7 +55,7 @@ function Login() {
                   setPassword(event.target.value);
                   setError("");
                 }}
-                type="text"
+                type="password"
                 className="block w-full p-2 border border-gray-200 rounded-md"
                 placeholder="Enter your Password"
               />
