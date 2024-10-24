@@ -17,6 +17,8 @@ function CreateOrder() {
   const [remainingStock, setRemainingStock] = useState<{
     [key: number]: number;
   }>({});
+  const [showModal, setShowModal] = useState<boolean>(false); // Modal state
+  const [orderDetails, setOrderDetails] = useState<any>(null);
 
   const navigate = useNavigate();
 
@@ -61,14 +63,17 @@ function CreateOrder() {
     });
 
     try {
-      await axios.post(
+      const res = await axios.post(
         "http://localhost:8080/orders",
         {
           productIds: productIds,
         },
         config
       );
-      navigate("/orders");
+      console.log("order details : ", res.data);
+      setOrderDetails(res.data);
+      setShowModal(true);
+      // navigate("/orders");
     } catch (error) {
       console.log(error);
     }
@@ -147,6 +152,14 @@ function CreateOrder() {
       loadCategories();
     }
   }, [isAuthenticated]);
+
+  function handlePrint() {
+    window.print();
+  }
+  function closeBill() {
+    setShowModal(false);
+    navigate("/orders");
+  }
 
   return (
     <div>
@@ -237,6 +250,64 @@ function CreateOrder() {
           </button>
         </div>
       </div>
+      {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white p-4 rounded-md w-[600px]">
+            <h1 className="text-xl font-bold mb-2 text-center">POS Solution</h1>
+            <h2 className="text-xl font-bold mb-4">Order Bill</h2>
+            <p>
+              <strong>Order ID:</strong> {orderDetails.id}
+            </p>
+            <p>
+              <strong>Order Date:</strong>{" "}
+              {new Date(orderDetails.orderDateTime).toLocaleString()}
+            </p>
+            <table className="w-full border-separate border-spacing-0 border-none text-left mt-4">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Product Name</th>
+                  <th className="text-right">Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                {orderDetails.orderedProducts.map((product: any) => (
+                  <tr key={product.productId}>
+                    <td>{product.productId}</td>
+                    <td>{product.productName}</td>
+                    <td className="text-right">{product.price}</td>
+                  </tr>
+                ))}
+                <tr>
+                  <td colSpan={2}>
+                    <strong>Total</strong>
+                  </td>
+                  <td className="text-right">
+                    <strong>{orderDetails.totalPrice}</strong>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div className="text-xs text-center">
+              **** Thank you! Come Again ****
+            </div>
+            <div className="flex justify-end mt-4">
+              <button
+                onClick={handlePrint}
+                className="bg-cyan-500 text-white px-4 py-3 rounded-md hover:bg-cyan-700"
+              >
+                Print
+              </button>
+              <button
+                onClick={closeBill}
+                className="bg-gray-500 text-white px-4 py-2 rounded-md ml-2 hover:bg-gray-700"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
