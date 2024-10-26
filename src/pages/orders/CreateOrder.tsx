@@ -109,7 +109,7 @@ function CreateOrder() {
       currentStock = stock?.qty!;
 
       if (currentStock <= 0) {
-        alert("Not Enough Stocks!");
+        alert("Not Enough Stocks in " + product.productName + "!");
         return;
       } else {
         setRemainingStock((prev) => ({
